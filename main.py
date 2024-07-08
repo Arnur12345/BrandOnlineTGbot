@@ -5,10 +5,10 @@ from telebot.types import ReplyKeyboardMarkup, KeyboardButton
 
 bot = telebot.TeleBot('7325864976:AAFqOW2OFlWgZOIv-6Q90QloMBlT9Mqfpvo')
 BOT_TOKEN = '7325864976:AAFqOW2OFlWgZOIv-6Q90QloMBlT9Mqfpvo'
-APP_URL = 'https://brandonline-7b6bec56d5d1.herokuapp.com/' + BOT_TOKEN
+APP_URL = 'https://telegram-brand-b676ba61bb1c.herokuapp.com/' + BOT_TOKEN
 
 # Подключение к базе данных
-conn = psycopg2.connect(host='localhost',dbname='brand',user='postgres',password='arnur',port=5432)
+conn = psycopg2.connect(host='localhost',dbname='brand',user='postgres',password='arnur',port=5433)
 cursor = conn.cursor()
 
 @bot.message_handler(commands=['start'])
@@ -17,16 +17,10 @@ def send_welcome(message):
     cursor.execute("""
         INSERT INTO users (telegram_name) 
         VALUES (%s) 
-        ON CONFLICT (telegram_name) DO NOTHING
-        RETURNING id, created_at
     """, (telegram_name,))
-    user = cursor.fetchone()
+    
     conn.commit()
-    if user:
-        user_id, created_at = user
-        print(f'New user created: ID={user_id}, created_at={created_at}')
-    else:
-        print('User already exists')
+    
     bot.reply_to(message, 'Добро пожаловать! Используйте команду /test для начала теста.')
     
 @bot.message_handler(commands=['test'])
@@ -101,6 +95,7 @@ def calculate_score(chat_id, context, completed_time):
         INSERT INTO user_performance (user_id, test_id, score, completed_at)
         VALUES (%s, %s, %s, %s)
     """, (user_id, test_id, correct_answers, completed_time))
+    cursor.execute('TRUNCATE TABLE user_answer')
     conn.commit()
 
     # Отправка сообщения с результатами
