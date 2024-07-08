@@ -22,7 +22,7 @@ def send_welcome(message):
             INSERT INTO Users ( telegram_name) 
             VALUES (%s)
             ON CONFLICT DO NOTHING
-        """, (telegram_name))
+        """, (telegram_name,))
         conn.commit()
     except psycopg2.Error as e:
         conn.rollback()
