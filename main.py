@@ -19,17 +19,10 @@ def send_welcome(message):
     telegram_name = message.from_user.username
     cursor.execute("""
         INSERT INTO Users (telegram_name) 
-        VALUES (%s) 
-        ON CONFLICT (telegram_name) DO NOTHING
-        RETURNING id, created_at
+        VALUES (%s)
     """, (telegram_name,))
-    user = cursor.fetchone()
     conn.commit()
-    if user:
-        user_id, created_at = user
-        print(f'New user created: ID={user_id}, created_at={created_at}')
-    else:
-        print('User already exists')
+    
     bot.reply_to(message, 'Добро пожаловать! Используйте команду /test для начала теста.')
     
 @bot.message_handler(commands=['test'])
