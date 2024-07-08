@@ -1,14 +1,16 @@
+import os
 import telebot
 import psycopg2
 from datetime import datetime
 from telebot.types import ReplyKeyboardMarkup, KeyboardButton
 
-bot = telebot.TeleBot('7325864976:AAFqOW2OFlWgZOIv-6Q90QloMBlT9Mqfpvo')
-BOT_TOKEN = '7325864976:AAFqOW2OFlWgZOIv-6Q90QloMBlT9Mqfpvo'
-APP_URL = 'https://telegram-brand-b676ba61bb1c.herokuapp.com/' + BOT_TOKEN
+BOT_TOKEN = os.getenv('BOT_TOKEN')
+DATABASE_URL = os.getenv('DATABASE_URL')
+
+bot = telebot.TeleBot(BOT_TOKEN)
 
 # Подключение к базе данных
-conn = psycopg2.connect(host='localhost',dbname='brand',user='postgres',password='arnur',port=5432)
+conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 cursor = conn.cursor()
 
 @bot.message_handler(commands=['start'])
