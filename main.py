@@ -8,7 +8,7 @@ BOT_TOKEN = '7325864976:AAFqOW2OFlWgZOIv-6Q90QloMBlT9Mqfpvo'
 APP_URL = 'https://telegram-brand-b676ba61bb1c.herokuapp.com/' + BOT_TOKEN
 
 # Подключение к базе данных
-conn = psycopg2.connect(host='localhost',dbname='brand',user='postgres',password='arnur',port=5433)
+conn = psycopg2.connect(host='localhost',dbname='brand',user='postgres',password='arnur',port=5432)
 cursor = conn.cursor()
 
 @bot.message_handler(commands=['start'])
