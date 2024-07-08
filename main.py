@@ -1,6 +1,7 @@
 import os
 import telebot
 import psycopg2
+from config import *
 from datetime import datetime
 from telebot.types import ReplyKeyboardMarkup, KeyboardButton
 
