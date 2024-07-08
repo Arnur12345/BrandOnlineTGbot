@@ -16,12 +16,17 @@ cursor = conn.cursor()
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
-    telegram_name = message.from_user.username
-    cursor.execute("""
-        INSERT INTO Users (telegram_name) 
-        VALUES (%s)
-    """, (telegram_name,))
-    conn.commit()
+    telegram_name = message.from_user.username   
+    try:
+        cursor.execute("""
+            INSERT INTO Users ( telegram_name) 
+            VALUES (%s)
+            ON CONFLICT DO NOTHING
+        """, (telegram_name))
+        conn.commit()
+    except psycopg2.Error as e:
+        conn.rollback()
+        print(f"Error inserting user: {e}")
     
     bot.reply_to(message, 'Добро пожаловать! Используйте команду /test для начала теста.')
     
