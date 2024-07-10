@@ -105,10 +105,8 @@ def calculate_score(chat_id, context, completed_time):
     cursor.execute('TRUNCATE TABLE user_answer')
     conn.commit()
 
-    # Отправка сообщения с результатами
     bot.send_message(chat_id, f'Тест завершен! Ваш результат: {correct_answers} правильных ответов.')
 
-# # Обработчик команды /results
 @bot.message_handler(commands=['results'])
 def send_results(message):
     telegram_name = message.from_user.username
@@ -118,9 +116,10 @@ def send_results(message):
     
     try:
         query = """
-        SELECT up.test_id, up.score, up.completed_at
+        SELECT t.name, up.score, up.completed_at
         FROM user_performance up
         JOIN users u ON up.user_id = u.id
+        JOIN tests t ON up.test_id = t.id
         WHERE u.telegram_name = %s
         """
         cursor.execute(query, (telegram_name,))
@@ -132,12 +131,13 @@ def send_results(message):
         else:
             response = "Ваши результаты:\n"
             for result in results:
-                response += f"Тест ID: {result[0]}, Баллы: {result[1]}, Дата: {result[2]}\n"
+                response += f"Тест: {result[0]}, Баллы: {result[1]}, Дата: {result[2]}\n"
         
         bot.send_message(message.chat.id, response)
     
     except Exception as e:
         bot.send_message(message.chat.id, "Произошла ошибка при получении результатов. Пожалуйста, попробуйте позже.")
+
 
 
 bot.infinity_polling()
