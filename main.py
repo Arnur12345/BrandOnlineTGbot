@@ -3,6 +3,7 @@ import telebot
 import psycopg2
 from config import *
 from datetime import datetime
+from telebot import types
 from telebot.types import ReplyKeyboardMarkup, KeyboardButton
 
 BOT_TOKEN = os.getenv('BOT_TOKEN')
@@ -27,6 +28,12 @@ def send_welcome(message):
     except psycopg2.Error as e:
         conn.rollback()
         print(f"Error inserting user: {e}")
+        
+    c1 = types.BotCommand(command='start', description='Start the Bot')
+    c2 = types.BotCommand(command='test', description='Start the tests')
+    c3 = types.BotCommand(command='results', description='Check the results')
+    bot.set_my_commands([c1,c2,c3])
+    bot.set_chat_menu_button(message.chat.id, types.MenuButtonCommands('commands'))
     
     bot.reply_to(message, 'Добро пожаловать! Используйте команду /test для начала теста.')
     
