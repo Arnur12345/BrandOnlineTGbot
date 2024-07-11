@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    {% if user.is_authenticated %}
+    <div class="container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="profile">
+                    <img src="{% static 'img/arnur.jpg' %}" alt="John David">
+                    <div class="profile-info">
+                        <h4>Artyqbay Arnur</h4>
+                        <span>Online</span>
+                    </div>
+                </div>
+            </div>
+            <ul class="nav-list">
+                <li><a href="{% url 'dashboard' %}"><i class="icon-dashboard"></i> Dashboard</a></li>
+                <li><a href="{% url 'user_list' %}"><i class="icon-dashboard"></i> User List</a></li>
+                <li><a href="{% url 'subject_list' %}"><i class="icon-dashboard"></i> Subject List</a></li>
+                <li><a href="{% url 'test_list' %}"><i class="icon-dashboard"></i> Test List</a></li>
+                <li><a href="{% url 'question_list' %}"><i class="icon-dashboard"></i> Question List</a></li>
+                <li><a href="{% url 'option_list' %}"><i class="icon-dashboard"></i> Option List</a></li>
+            </ul>
+        </div>
+        <div class="main-content">
+            <div class="topbar">
+                <div class="topbar-left">
+                    <button class="toggle-sidebar"><i class="icon-menu"></i></button>
+                    <h1>Dashboard</h1>
+                </div>
+                <div class="topbar-right">
+                    <div class="notifications">
+                        <i class="icon-bell"></i>
+                        <i class="icon-envelope"></i>
+                        <i class="icon-question"></i>
+                    </div>
+                    <!-- dashboard.html -->
+                    <div class="topbar-right">
+                        <div class="notifications">
+                            <i class="icon-bell"></i>
+                            <i class="icon-envelope"></i>
+                            <i class="icon-question"></i>
+                            <button><a class="logout" href="{% url 'logout' %}" class="logout-link">Logout</a></button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="content">
+                <div class="cards">
+                    <div class="card">
+                        <div class="card-icon"><i class="icon-user"></i></div>
+                        <div class="card-info">
+                            <h3>{{ user_count }}</h3>
+                            <p>Total Users</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon"><i class="icon-cloud"></i></div>
+                        <div class="card-info">
+                            <h3>{{ test_count }}</h3>
+                            <p>Total Tests</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-icon"><i class="icon-comments"></i></div>
+                        <div class="card-info">
+                            <h3>{{ subject_count }}</h3>
+                            <p>Total Subjects</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="user-table">
+                    <h2>Users</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Telegram Name</th>
+                                <th>Created At</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                            <tr>
+                                <td>{{ user.id }}</td>
+                                <td>{{ user.telegram_name }}</td>
+                                <td>{{ user.created_at }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'js/chart.js' %}"></script>
+    <script>
+        // Add your chart.js code here
+    </script>
+    {% else %}
+    <h1>Please, <a href="{% url 'login' %}">Login</a></h1>
+    {% endif %}
+</body>
+</html>

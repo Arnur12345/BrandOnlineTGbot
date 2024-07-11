@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}User Form{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'user_form.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="profile">
+                    <div class="profile-info">
+                        <h4>Artyqbay Arnur</h4>
+                        <span>Online</span>
+                    </div>
+                </div>
+            </div>
+            <ul class="nav-list">
+                <li><a href="{% url 'dashboard' %}"><i class="icon-dashboard"></i> Dashboard</a></li>
+                <li><a href="{% url 'user_list' %}"><i class="icon-dashboard"></i> User List</a></li>
+                <li><a href="{% url 'subject_list' %}"><i class="icon-dashboard"></i> Subject List</a></li>
+                <li><a href="{% url 'test_list' %}"><i class="icon-dashboard"></i> Test List</a></li>
+                <li><a href="{% url 'question_list' %}"><i class="icon-dashboard"></i> Question List</a></li>
+                <li><a href="{% url 'option_list' %}"><i class="icon-dashboard"></i> Option List</a></li>
+            </ul>
+        </div>
+        <div class="main-content">
+            <div class="topbar">
+                <div class="topbar-left">
+                    <button class="toggle-sidebar"><i class="icon-menu"></i></button>
+                </div>
+                <div class="topbar-right">
+                    <div class="user-info">
+                    </div>
+                    <div class="notifications">
+                        <i class="icon-bell"></i>
+                        <i class="icon-envelope"></i>
+                        <i class="icon-question"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="content">
+                <div class="form-container">
+                    <h2>{% block form_title %}User Form{% endblock %}</h2>
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-primary">Save</button>
+                        <a href="{% url 'user_list' %}" class="btn btn-secondary">Cancel</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

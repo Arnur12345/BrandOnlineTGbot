@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="{% static 'login.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="profile">
+                    <img src="{% static 'img/arnur.jpg' %}" alt="John David">
+                    <div class="profile-info">
+                        <h4>Artyqbay Arnur</h4>
+                        <span>Online</span>
+                    </div>
+                </div>
+            </div>
+            <ul class="nav-list">
+                <li><a href="{% url 'dashboard' %}"><i class="icon-dashboard"></i> Dashboard</a></li>
+                <li><a href="{% url 'user_list' %}"><i class="icon-dashboard"></i> User List</a></li>
+                <li><a href="{% url 'subject_list' %}"><i class="icon-dashboard"></i> Subject List</a></li>
+                <li><a href="{% url 'test_list' %}"><i class="icon-dashboard"></i> Test List</a></li>
+                <li><a href="{% url 'question_list' %}"><i class="icon-dashboard"></i> Question List</a></li>
+                <li><a href="{% url 'option_list' %}"><i class="icon-dashboard"></i> Option List</a></li>
+            </ul>
+        </div>
+        <div class="login-container">
+            <div class="login-box">
+                <h2>Login</h2>
+                <form method="post" action="{% url 'login' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="id_username">Username</label>
+                        {{ form.username }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_password">Password</label>
+                        {{ form.password }}
+                    </div>
+                    <button type="submit" class="login-btn">Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Option List</title>
+    <link rel="stylesheet" href="{% static 'option_list.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="profile">
+                    <div class="profile-info">
+                        <h4>Artyqbay Arnur</h4>
+                        <span>Online</span>
+                    </div>
+                </div>
+            </div>
+            <ul class="nav-list">
+                <li><a href="{% url 'dashboard' %}"><i class="icon-dashboard"></i> Dashboard</a></li>
+                <li><a href="{% url 'user_list' %}"><i class="icon-dashboard"></i> User List</a></li>
+                <li><a href="{% url 'subject_list' %}"><i class="icon-dashboard"></i> Subject List</a></li>
+                <li><a href="{% url 'test_list' %}"><i class="icon-dashboard"></i> Test List</a></li>
+                <li><a href="{% url 'question_list' %}"><i class="icon-dashboard"></i> Question List</a></li>
+                <li><a href="{% url 'option_list' %}"><i class="icon-dashboard"></i> Option List</a></li>
+            </ul>
+        </div>
+        <div class="main-content">
+            <div class="topbar">
+                <div class="topbar-left">
+                    <h1>Option List</h1>
+                </div>
+                <div class="topbar-right">
+                    <div class="notifications">
+                        <i class="icon-bell"></i>
+                        <i class="icon-envelope"></i>
+                        <i class="icon-question"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="content">
+                <div class="content-header">
+                    <h1>Option List</h1>
+                    <a href="{% url 'option_create' %}" class="btn btn-primary">Add Option</a>
+                </div>
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Text</th>
+                                <th>Question</th>
+                                <th>Correct</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for option in options %}
+                            <tr>
+                                <td>{{ option.id }}</td>
+                                <td>{{ option.text }}</td>
+                                <td>{{ option.question.text }}</td>
+                                <td>{{ option.is_correct }}</td>
+                                <td>
+                                    <a href="{% url 'option_update' option.id %}" class="btn btn-warning">Edit</a>
+                                    <a href="{% url 'option_delete' option.id %}" class="btn btn-danger">Delete</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
