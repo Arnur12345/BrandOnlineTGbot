@@ -9,7 +9,7 @@ from django.db import models
 
 
 class Options(models.Model):
-    id = models.BigIntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     question = models.ForeignKey('Questions', models.DO_NOTHING)
     option_text = models.TextField()
 
@@ -20,7 +20,7 @@ class Options(models.Model):
 
 
 class Questions(models.Model):
-    id = models.BigIntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     test = models.ForeignKey('Tests', models.DO_NOTHING)
     question_text = models.TextField()
     correct_answer = models.TextField()
@@ -32,7 +32,7 @@ class Questions(models.Model):
 
 
 class Subject(models.Model):
-    id = models.BigIntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     name = models.TextField()
     def __str__(self):
         return self.name
@@ -44,7 +44,7 @@ class Subject(models.Model):
 
 
 class Tests(models.Model):
-    id = models.BigIntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     name = models.TextField()
     subject = models.ForeignKey(Subject, models.DO_NOTHING, blank=True, null=True)
 
@@ -58,7 +58,7 @@ class Tests(models.Model):
 
 
 class UserAnswer(models.Model):
-    id = models.BigIntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     user = models.ForeignKey('Users', models.DO_NOTHING)
     question = models.ForeignKey(Questions, models.DO_NOTHING)
     selected_option = models.TextField()
@@ -72,7 +72,7 @@ class UserAnswer(models.Model):
 
 
 class UserPerformance(models.Model):
-    id = models.BigIntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     user = models.ForeignKey('Users', models.DO_NOTHING)
     test = models.ForeignKey(Tests, models.DO_NOTHING)
     score = models.BigIntegerField()
@@ -85,7 +85,7 @@ class UserPerformance(models.Model):
 
 
 class Users(models.Model):
-    id = models.BigIntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     telegram_name = models.TextField(unique=True)
     created_at = models.DateTimeField()
 
