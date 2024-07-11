@@ -26,7 +26,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'r9#y#1qwj_6%w7hyc7l!&&umy1iq7%mr52r8%+l@n64zgkeyaf'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['https://telegram-brand-b676ba61bb1c.herokuapp.com/']
 
