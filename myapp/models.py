@@ -77,7 +77,6 @@ class UserPerformance(models.Model):
     test = models.ForeignKey(Tests, models.DO_NOTHING)
     score = models.BigIntegerField()
     completed_at = models.DateTimeField()
-
     
     class Meta:
         managed = False

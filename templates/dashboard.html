@@ -8,8 +8,6 @@
     <link rel="stylesheet" href="{% static 'style.css' %}">
 </head>
 <body>
-    {% if user.is_authenticated %}
-    {% if user.is_staff %}
     <div class="container">
         <div class="sidebar">
             <div class="sidebar-header">
@@ -105,9 +103,6 @@
     <script>
         // Add your chart.js code here
     </script>
-    {% endif %}
-    {% else %}
-    <h1>Please, <a href="{% url 'login' %}">Login</a></h1>
-    {% endif %}
+
 </body>
 </html>
