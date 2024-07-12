@@ -20,13 +20,19 @@ def send_welcome(message):
     telegram_name = message.from_user.username 
     if telegram_name is None:
         telegram_name = message.from_user.first_name  
+    
     try:
-        cursor.execute("""
-            INSERT INTO Users ( telegram_name) 
-            VALUES (%s)
-            ON CONFLICT DO NOTHING
-        """, (telegram_name,))
-        conn.commit()
+        # Проверка наличия пользователя в базе данных
+        cursor.execute("SELECT 1 FROM Users WHERE telegram_name = %s", (telegram_name,))
+        user_exists = cursor.fetchone()
+        
+        # Если пользователь не найден, добавляем его в базу данных
+        if not user_exists:
+            cursor.execute("""
+                INSERT INTO Users (telegram_name) 
+                VALUES (%s)
+            """, (telegram_name,))
+            conn.commit()
     except psycopg2.Error as e:
         conn.rollback()
         print(f"Error inserting user: {e}")
@@ -34,10 +40,11 @@ def send_welcome(message):
     c1 = types.BotCommand(command='start', description='Start the Bot')
     c2 = types.BotCommand(command='test', description='Start the tests')
     c3 = types.BotCommand(command='results', description='Check the results')
-    bot.set_my_commands([c1,c2,c3])
+    bot.set_my_commands([c1, c2, c3])
     bot.set_chat_menu_button(message.chat.id, types.MenuButtonCommands('commands'))
     
     bot.reply_to(message, 'Добро пожаловать! Используйте команду /test для начала теста.')
+
     
 @bot.message_handler(commands=['test'])
 def send_test_list(message):
