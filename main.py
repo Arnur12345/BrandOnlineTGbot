@@ -23,13 +23,13 @@ def send_welcome(message):
     
     try:
         # Проверка наличия пользователя в базе данных
-        cursor.execute("SELECT 1 FROM Users WHERE telegram_name = %s", (telegram_name,))
+        cursor.execute("SELECT 1 FROM users WHERE telegram_name = %s", (telegram_name,))
         user_exists = cursor.fetchone()
         
         # Если пользователь не найден, добавляем его в базу данных
         if not user_exists:
             cursor.execute("""
-                INSERT INTO Users (telegram_name) 
+                INSERT INTO users (telegram_name) 
                 VALUES (%s)
             """, (telegram_name,))
             conn.commit()
