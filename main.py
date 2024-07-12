@@ -45,16 +45,29 @@ def send_welcome(message):
     
     bot.reply_to(message, 'Добро пожаловать! Используйте команду /test для начала теста.')
 
-    
 @bot.message_handler(commands=['test'])
-def send_test_list(message):
+def send_subject_list(message):
     markup = ReplyKeyboardMarkup(one_time_keyboard=True)
-    cursor.execute("SELECT id, name FROM tests")
+    cursor.execute("SELECT id, name FROM subjects")
+    subjects = cursor.fetchall()
+    for subject in subjects:
+        markup.add(KeyboardButton(f"Предмет {subject[0]}: {subject[1]}"))
+    bot.send_message(message.chat.id, 'Выберите предмет:', reply_markup=markup)
+
+@bot.message_handler(func=lambda message: message.text.startswith('Предмет'))
+def handle_subject_selection(message):
+    subject_id = int(message.text.split()[1].rstrip(':'))
+    context = {'subject_id': subject_id}
+    send_test_list(message, context)
+
+def send_test_list(message, context):
+    subject_id = context['subject_id']
+    markup = ReplyKeyboardMarkup(one_time_keyboard=True)
+    cursor.execute("SELECT id, name FROM tests WHERE subject_id = %s", (subject_id,))
     tests = cursor.fetchall()
     for test in tests:
         markup.add(KeyboardButton(f"Тест {test[0]}: {test[1]}"))
     bot.send_message(message.chat.id, 'Выберите тест:', reply_markup=markup)
-
 
 @bot.message_handler(func=lambda message: message.text.startswith('Тест'))
 def handle_test_selection(message):
@@ -78,35 +91,33 @@ def ask_question(chat_id, context):
     context['question_id'] = question[0]
     bot.register_next_step_handler_by_chat_id(chat_id, process_answer, context)
 
-def process_answer(message,context):
+def process_answer(message, context):
     selected_option = message.text
     time = datetime.fromtimestamp(message.date)
-    cursor.execute('SELECT correct_answer FROM questions WHERE id = %s',(context['question_id'],))
+    cursor.execute('SELECT correct_answer FROM questions WHERE id = %s', (context['question_id'],))
     correct_answer = cursor.fetchone()[0]
-    is_correct = (selected_option==correct_answer)
+    is_correct = (selected_option == correct_answer)
 
-    cursor.execute('SELECT id FROM users WHERE telegram_name = %s',(context['telegram_name'],))
+    cursor.execute('SELECT id FROM users WHERE telegram_name = %s', (context['telegram_name'],))
     user_id = cursor.fetchone()[0]
     context['user_id'] = user_id
 
-    cursor.execute('INSERT INTO user_answer(user_id,question_id,selected_option,is_correct,answered_at) VALUES(%s,%s,%s,%s,%s)' ,(user_id,context['question_id'],selected_option,is_correct,time))
+    cursor.execute('INSERT INTO user_answer(user_id, question_id, selected_option, is_correct, answered_at) VALUES(%s, %s, %s, %s, %s)', (user_id, context['question_id'], selected_option, is_correct, time))
     conn.commit()
     context['current_question'] += 1
     if context['current_question'] < len(context['questions']):
-        ask_question(message.chat.id,context)
+        ask_question(message.chat.id, context)
     else:
         completed_time = datetime.fromtimestamp(message.date)
-        calculate_score(message.chat.id,context,completed_time)
+        calculate_score(message.chat.id, context, completed_time)
 
 def calculate_score(chat_id, context, completed_time):
-    # Проверка правильности ID пользователя и теста
     user_id = context.get('user_id')
     test_id = context.get('test_id')
     if not user_id or not test_id:
         bot.send_message(chat_id, 'Ошибка: не удалось получить ID пользователя или теста.')
         return
 
-    # Подсчет количества правильных ответов
     cursor.execute("""
         SELECT COUNT(*)
         FROM user_answer
@@ -116,7 +127,6 @@ def calculate_score(chat_id, context, completed_time):
     """, (user_id, test_id))
     correct_answers = cursor.fetchone()[0]
 
-    # Вставка результатов в таблицу UserPerformance
     cursor.execute("""
         INSERT INTO user_performance (user_id, test_id, score, completed_at)
         VALUES (%s, %s, %s, %s)
@@ -156,7 +166,5 @@ def send_results(message):
     
     except Exception as e:
         bot.send_message(message.chat.id, "Произошла ошибка при получении результатов. Пожалуйста, попробуйте позже.")
-
-
 
 bot.infinity_polling()
