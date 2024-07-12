@@ -54,7 +54,10 @@ def handle_test_selection(message):
     test_id = int(message.text.split()[1].rstrip(':'))
     cursor.execute("SELECT id, question_text FROM questions WHERE test_id = %s", (test_id,))
     questions = cursor.fetchall()
-    context = {'questions': questions, 'current_question': 0, 'test_id': test_id, 'telegram_name': message.from_user.username}
+    telegram_name = message.from_user.username 
+    if telegram_name is None:
+        telegram_name = message.from_user.first_name  
+    context = {'questions': questions, 'current_question': 0, 'test_id': test_id, 'telegram_name': telegram_name}
     ask_question(message.chat.id, context)
 
 def ask_question(chat_id, context):
