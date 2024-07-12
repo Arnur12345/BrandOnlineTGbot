@@ -17,7 +17,9 @@ cursor = conn.cursor()
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
-    telegram_name = message.from_user.username   
+    telegram_name = message.from_user.username 
+    if telegram_name is None:
+        telegram_name = message.from_user.first_name  
     try:
         cursor.execute("""
             INSERT INTO Users ( telegram_name) 
