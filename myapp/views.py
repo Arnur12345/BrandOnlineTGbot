@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from .models import Users, Subject, Tests, Questions, Options, UserAnswer, UserPerformance
-from .forms import UserForm, SubjectForm, TestForm, QuestionForm, OptionForm, UserAnswerForm, UserPerformanceForm, GoogleFormImportForm
+from .forms import UserForm, SubjectForm, TestForm, QuestionForm, OptionForm, UserAnswerForm, UserPerformanceForm, GoogleFormLinkForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
@@ -216,36 +216,45 @@ class UserPerformanceDeleteView(DeleteView):
     template_name = 'user_performance_confirm_delete.html'
     success_url = reverse_lazy('user_performance_list')
 
-
-
 def import_google_form(request):
     if request.method == 'POST':
-        form = GoogleFormImportForm(request.POST)
+        form = GoogleFormLinkForm(request.POST)
         if form.is_valid():
-            test = form.cleaned_data['test']
             google_form_link = form.cleaned_data['google_form_link']
-
+            selected_test = form.cleaned_data['test']
+            
             # Fetch Google Form data
             response = requests.get(google_form_link)
             response.raise_for_status()
             soup = BeautifulSoup(response.content, 'html.parser')
 
             # Extract questions and options
-            form_fields = soup.find_all('div', class_='freebirdFormviewerComponentsQuestionBaseRoot')
+            form_fields = soup.find_all('div', {'role': 'listitem'})
 
             for field in form_fields:
-                question_text = field.find('div', class_='freebirdFormviewerComponentsQuestionBaseTitle').text.strip()
-                options = [opt.text.strip() for opt in field.find_all('div', class_='freebirdFormviewerComponentsQuestionRadioChoice')]
-
-                # Create question
-                question = Questions.objects.create(test=test, question_text=question_text, correct_answer="")  # Adjust the correct_answer as needed
-
-                # Create options
-                for option_text in options:
-                    Options.objects.create(question=question, option_text=option_text)
-
-            return redirect('dashboard')
+                # Extract question text
+                question_title = field.find('div', {'role': 'heading'})
+                if question_title:
+                    question_text = question_title.text.strip()
+                    
+                    # Extract options
+                    options = []
+                    option_fields = field.find_all('span', {'role': 'presentation'})
+                    for opt in option_fields:
+                        if opt.text.strip() != '':
+                            options.append(opt.text.strip())
+                    
+                    # Assuming there is no direct way to find correct answers, set a placeholder
+                    correct_answer = "Not Available"
+                    
+                    # Create the Question and Options in the database
+                    question = Questions.objects.create(test=selected_test, question_text=question_text, correct_answer=correct_answer)
+                    
+                    for option_text in options:
+                        Options.objects.create(question=question, option_text=option_text)
+            
+            return redirect(reverse_lazy('question_list'))
     else:
-        form = GoogleFormImportForm()
+        form = GoogleFormLinkForm()
 
     return render(request, 'import_google_form.html', {'form': form})

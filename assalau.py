@@ -1,24 +1,42 @@
-from apiclient import discovery
-from httplib2 import Http
-from oauth2client import client, file, tools
+import requests
+from bs4 import BeautifulSoup
 
-SCOPES = "https://www.googleapis.com/auth/forms.body.readonly"
-DISCOVERY_DOC = "https://forms.googleapis.com/$discovery/rest?version=v1"
+google_form_link = 'https://docs.google.com/forms/d/e/1FAIpQLSfS9naslAOcEnD6_es0aTnTmEGwsl1fw3VemqwM4ubq8NopDA/viewform?usp=sf_link'
 
-store = file.Storage("token.json")
-creds = store.get()
-if not creds or creds.invalid:
-    flow = client.flow_from_clientsecrets("client_secrets.json", SCOPES)
-    creds = tools.run_flow(flow, store)
-service = discovery.build(
-    "forms",
-    "v1",
-    http=creds.authorize(Http()),
-    discoveryServiceUrl=DISCOVERY_DOC,
-    static_discovery=False,
-)
+# Fetch Google Form data
+response = requests.get(google_form_link)
+response.raise_for_status()
+soup = BeautifulSoup(response.content, 'html.parser')
 
-# Prints the title of the sample form:
-form_id = "1FAIpQLSd9iuEi9TsFybCkEbp96wyUK7UqtmRVWvMpbzkZGhlhmHxZqw"
-result = service.forms().get(formId=form_id).execute()
-print(result)
+# Extract questions and options
+form_fields = soup.find_all('div', {'role': 'listitem'})
+
+questions_data = []
+
+for field in form_fields:
+    # Extract question text
+    question_title = field.find('div', {'role': 'heading'})
+    if question_title:
+        question_text = question_title.text.strip()
+        
+        # Extract options
+        options = []
+        option_fields = field.find_all('span', {'role': 'presentation'})
+        for opt in option_fields:
+            if opt.text.strip() != '':
+                options.append(opt.text.strip())
+        
+        # Assuming there is no direct way to find correct answers, just collect questions and options
+        questions_data.append({
+            'question': question_text,
+            'options': options,
+            'correct_answer': "Not Available"
+        })
+
+# Print extracted data
+for data in questions_data:
+    print(f"Question: {data['question']}")
+    for option in data['options']:
+        print(f"Option: {option}")
+    print(f"Correct Answer: {data['correct_answer']}")
+    print()
