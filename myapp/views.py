@@ -10,6 +10,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.decorators import method_decorator
 import requests
 from bs4 import BeautifulSoup
+import re
 
 
 def user_login(request):
@@ -216,6 +217,7 @@ class UserPerformanceDeleteView(DeleteView):
     template_name = 'user_performance_confirm_delete.html'
     success_url = reverse_lazy('user_performance_list')
 
+
 def import_google_form(request):
     if request.method == 'POST':
         form = GoogleFormLinkForm(request.POST)
@@ -238,11 +240,9 @@ def import_google_form(request):
                     question_text = question_title.text.strip()
                     
                     # Extract options
-                    options = []
-                    option_fields = field.find_all('span', {'role': 'presentation'})
-                    for opt in option_fields:
-                        if opt.text.strip() != '':
-                            options.append(opt.text.strip())
+                    options_text = field.get_text(separator="\n")
+                    options = re.split(r'(А\)|В\)|С\)|Д\))', options_text)
+                    options = [opt.strip() for opt in options if opt.strip() and not re.match(r'(А\)|В\)|С\)|Д\))', opt.strip())]
                     
                     # Assuming there is no direct way to find correct answers, set a placeholder
                     correct_answer = "Not Available"
