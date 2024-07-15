@@ -5,3 +5,5 @@ gunicorn
 django
 django_heroku
 dj_database_url
+bs4
+requests

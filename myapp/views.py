@@ -10,7 +10,6 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.decorators import method_decorator
 import requests
 from bs4 import BeautifulSoup
-from django.urls import reverse_lazy
 
 
 def user_login(request):
