@@ -240,9 +240,13 @@ def import_google_form(request):
                     question_text = question_title.text.strip()
                     
                     # Extract options
-                    options_text = field.get_text(separator="\n")
-                    options = re.split(r'(А\)|В\)|С\)|Д\))', options_text)
-                    options = [opt.strip() for opt in options if opt.strip() and not re.match(r'(А\)|В\)|С\)|Д\))', opt.strip())]
+                    options = []
+                    option_fields = field.find_all('div', {'role': 'listitem'})
+                    for opt in option_fields:
+                        opt_text = opt.get_text(separator="\n")
+                        # Use regex to split based on option delimiters (e.g., "А)", "В)", etc.)
+                        split_options = re.split(r'\b([А-Я])\)\s*', opt_text)
+                        options += [text.strip() for text in split_options if text.strip() and not re.match(r'[А-Я]', text)]
                     
                     # Assuming there is no direct way to find correct answers, set a placeholder
                     correct_answer = "Not Available"
