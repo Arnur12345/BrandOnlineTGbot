@@ -50,4 +50,5 @@ urlpatterns = [
     path('user_performances/add/', views.UserPerformanceCreateView.as_view(), name='user_performance_create'),
     path('user_performances/edit/<int:pk>/', views.UserPerformanceUpdateView.as_view(), name='user_performance_update'),
     path('user_performances/delete/<int:pk>/', views.UserPerformanceDeleteView.as_view(), name='user_performance_delete'),
+    path('import-google-form/', views.import_google_form, name='import_google_form'),
 ]

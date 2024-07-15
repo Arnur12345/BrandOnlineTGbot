@@ -35,3 +35,7 @@ class UserPerformanceForm(forms.ModelForm):
     class Meta:
         model = UserPerformance
         fields = ['user', 'test', 'score', 'completed_at']
+
+class GoogleFormImportForm(forms.Form):
+    test = forms.ModelChoiceField(queryset=Tests.objects.all(), label="Select Test")
+    google_form_link = forms.URLField(label="Google Form Link")

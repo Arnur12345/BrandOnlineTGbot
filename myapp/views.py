@@ -2,12 +2,15 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from .models import Users, Subject, Tests, Questions, Options, UserAnswer, UserPerformance
-from .forms import UserForm, SubjectForm, TestForm, QuestionForm, OptionForm, UserAnswerForm, UserPerformanceForm
+from .forms import UserForm, SubjectForm, TestForm, QuestionForm, OptionForm, UserAnswerForm, UserPerformanceForm, GoogleFormImportForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.decorators import method_decorator
+import requests
+from bs4 import BeautifulSoup
+from django.urls import reverse_lazy
 
 
 def user_login(request):
@@ -202,3 +205,37 @@ class UserPerformanceDeleteView(DeleteView):
     model = UserPerformance
     template_name = 'user_performance_confirm_delete.html'
     success_url = reverse_lazy('user_performance_list')
+
+
+
+def import_google_form(request):
+    if request.method == 'POST':
+        form = GoogleFormImportForm(request.POST)
+        if form.is_valid():
+            test = form.cleaned_data['test']
+            google_form_link = form.cleaned_data['google_form_link']
+
+            # Fetch Google Form data
+            response = requests.get(google_form_link)
+            response.raise_for_status()
+            soup = BeautifulSoup(response.content, 'html.parser')
+
+            # Extract questions and options
+            form_fields = soup.find_all('div', class_='freebirdFormviewerComponentsQuestionBaseRoot')
+
+            for field in form_fields:
+                question_text = field.find('div', class_='freebirdFormviewerComponentsQuestionBaseTitle').text.strip()
+                options = [opt.text.strip() for opt in field.find_all('div', class_='freebirdFormviewerComponentsQuestionRadioChoice')]
+
+                # Create question
+                question = Questions.objects.create(test=test, question_text=question_text, correct_answer="")  # Adjust the correct_answer as needed
+
+                # Create options
+                for option_text in options:
+                    Options.objects.create(question=question, option_text=option_text)
+
+            return redirect('dashboard')
+    else:
+        form = GoogleFormImportForm()
+
+    return render(request, 'import_google_form.html', {'form': form})
