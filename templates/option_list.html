@@ -60,8 +60,8 @@
                             {% for option in options %}
                             <tr>
                                 <td>{{ option.id }}</td>
-                                <td>{{ option.text }}</td>
-                                <td>{{ option.question.text }}</td>
+                                <td>{{ option.option_text }}</td>
+                                <td>{{ option.question.question_text }}</td>
                                 <td>{{ option.is_correct }}</td>
                                 <td>
                                     <a href="{% url 'option_update' option.id %}" class="btn btn-warning">Edit</a>
