@@ -64,6 +64,7 @@
                                 <td>
                                     <a href="{% url 'test_update' test.id %}" class="btn btn-warning">Edit</a>
                                     <a href="{% url 'test_delete' test.id %}" class="btn btn-danger">Delete</a>
+                                    <a href="{% url 'test_detail' test.id %}">Detail</a>
                                 </td>
                             </tr>
                             {% endfor %}

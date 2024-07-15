@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ test.name }}</title>
+</head>
+<body>
+    <h1>{{ test.name }}</h1>
+    <h2>Questions</h2>
+    <ul>
+        {% for question in questions %}
+        <li>
+            {{ question.question_text }}
+            <ul>
+                {% for option in question.options_set.all %}
+                <li>{{ option.option_text }}</li>
+                {% endfor %}
+            </ul>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

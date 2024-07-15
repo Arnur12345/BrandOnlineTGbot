@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from .models import Users, Subject, Tests, Questions, Options, UserAnswer, UserPerformance
 from .forms import UserForm, SubjectForm, TestForm, QuestionForm, OptionForm, UserAnswerForm, UserPerformanceForm, GoogleFormImportForm
 from django.contrib.auth import authenticate, login, logout
@@ -117,6 +117,17 @@ class TestDeleteView(DeleteView):
     model = Tests
     template_name = 'test_confirm_delete.html'
     success_url = reverse_lazy('test_list')
+
+    class TestDetailView(DetailView):
+        model = Tests
+        template_name = 'test_detail.html'
+        context_object_name = 'test'
+
+        def get_context_data(self, **kwargs):
+            context = super().get_context_data(**kwargs)
+            context['questions'] = Questions.objects.filter(test=self.object)
+            return context
+
 
 class QuestionListView(ListView):
     model = Questions
