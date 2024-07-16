@@ -218,8 +218,6 @@ class UserPerformanceDeleteView(DeleteView):
     success_url = reverse_lazy('user_performance_list')
 
 
-
-
 def import_google_form(request):
     if request.method == 'POST':
         form = GoogleFormLinkForm(request.POST)
@@ -243,8 +241,8 @@ def import_google_form(request):
                     
                     # Extract options
                     options_text = field.get_text(separator="\n")
-                    options = re.split(r'(?:\d+\)|\d+\.\s*|[А-Яа-яA-Za-z]\))\s*', options_text)
-                    options = [opt.strip() for opt in options if opt.strip() and not re.match(r'^\d+\)|\d+\.\s*|[А-Яа-яA-Za-z]\)$', opt.strip())]
+                    options = re.split(r'(?:\d+\.\s*|\d+\)\s*|[А-Яа-яA-Za-z]\)\s*)', options_text)
+                    options = [opt.strip() for opt in options if opt.strip() and not re.match(r'^\d+\.\s*|\d+\)\s*|[А-Яа-яA-Za-z]\)$', opt.strip())]
                     
                     # Assuming there is no direct way to find correct answers, set a placeholder
                     correct_answer = "Not Available"
