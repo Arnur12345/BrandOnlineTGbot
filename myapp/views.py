@@ -240,11 +240,15 @@ def import_google_form(request):
                     question_text = question_title.text.strip()
                     
                     # Extract options
-                    options_text = field.get_text(separator="\n")
+                    options_text = field.get_text(separator="\n").strip()
                     
-                    # Use a more robust regex to split based on delimiters like А), В), С), Д)
-                    options = re.split(r'(?<=\))[ \n]+', options_text)
-                    options = [opt.strip() for opt in options if opt.strip() and not re.match(r'[А-Я]\)', opt.strip())]
+                    # Use regex to split based on option delimiters like А), В), С), Д)
+                    # This regex accounts for the format shown in your example.
+                    options = re.split(r'\s*(?<=\s[А-Я]\)\s)', options_text)
+                    options = [opt.strip() for opt in options if opt.strip()]
+
+                    # Find the correct question text by removing the options part
+                    question_text = options.pop(0)
                     
                     # Assuming there is no direct way to find correct answers, set a placeholder
                     correct_answer = "Not Available"
