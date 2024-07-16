@@ -240,13 +240,11 @@ def import_google_form(request):
                     question_text = question_title.text.strip()
                     
                     # Extract options
-                    options = []
-                    # Locate option elements by their class or another attribute
-                    option_elements = field.find_all('div', class_='freebirdFormviewerComponentsQuestionRadioChoice')
-                    for opt in option_elements:
-                        option_text = opt.text.strip()
-                        if option_text:
-                            options.append(option_text)
+                    options_text = field.get_text(separator="\n")
+                    
+                    # Use a more robust regex to split based on delimiters like А), В), С), Д)
+                    options = re.split(r'(?<=\))[ \n]+', options_text)
+                    options = [opt.strip() for opt in options if opt.strip() and not re.match(r'[А-Я]\)', opt.strip())]
                     
                     # Assuming there is no direct way to find correct answers, set a placeholder
                     correct_answer = "Not Available"
