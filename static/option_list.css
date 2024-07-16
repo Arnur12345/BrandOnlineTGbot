@@ -179,13 +179,15 @@ body {
 
 
 .btn {
-    padding: 6px 15px;
-    text-decoration: none;
-    color: #fff;
+    padding: 10px 20px;
     border: none;
-    border-radius: 18px;
+    border-radius: 4px;
     cursor: pointer;
+    text-align: center;
+    display: inline-block;
+    margin: 5px 0;
 }
+
 
 .btn-primary {
     display: inline-block;
@@ -212,12 +214,13 @@ body {
     color: #fff;
     margin-right: 10px;
 }
+.btn-edit {
+    background-color: #28a745;
+    color: #fff;
+    margin-right: 10px; /* Add margin to the right of the edit button */
+}
 
 .btn-delete {
     background-color: #dc3545;
     color: #fff;
-}
-
-.btn-secondary {
-    background-color: #6c757d;
 }

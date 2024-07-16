@@ -181,12 +181,13 @@ body {
 
 
 .btn {
-    padding: 6px 15px;
-    text-decoration: none;
-    color: #fff;
+    padding: 10px 20px;
     border: none;
-    border-radius: 18px;
+    border-radius: 4px;
     cursor: pointer;
+    text-align: center;
+    display: inline-block;
+    margin: 5px 0;
 }
 
 .btn-primary {
@@ -209,12 +210,15 @@ body {
     background-color: #646994;
 }
 
-.btn-warning {text-decoration: none;
-    background-color: #ffc107;
+.btn-warning {
+    background-color: #28a745;
+    color: #fff;
+    margin-right: 10px; /* Add margin to the right of the edit button */
 }
 
-.btn-danger {text-decoration: none;
+.btn-danger {
     background-color: #dc3545;
+    color: #fff;
 }
 
 .btn-secondary {text-decoration: none;
