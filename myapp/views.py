@@ -227,41 +227,35 @@ def import_google_form(request):
             google_form_link = form.cleaned_data['google_form_link']
             selected_test = form.cleaned_data['test']
             
-            try:
-                # Fetch Google Form data
-                response = requests.get(google_form_link)
-                response.raise_for_status()
-                soup = BeautifulSoup(response.content, 'html.parser')
+            # Fetch Google Form data
+            response = requests.get(google_form_link)
+            response.raise_for_status()
+            soup = BeautifulSoup(response.content, 'html.parser')
 
-                # Extract questions and options
-                form_fields = soup.find_all('div', {'role': 'listitem'})
+            # Extract questions and options
+            form_fields = soup.find_all('div', {'role': 'listitem'})
 
-                for field in form_fields:
-                    # Extract question text
-                    question_title = field.find('div', {'role': 'heading'})
-                    if question_title:
-                        question_text = question_title.text.strip()
-                        
-                        # Extract options
-                        options_text = field.get_text(separator="\n")
-                        options = re.split(r'(?:[А-Яа-я]\)|\d+\)|[A-Za-z]\))\s*', options_text)
-                        options = [opt.strip() for opt in options if opt.strip() and not re.match(r'^[А-Яа-яA-Za-z]\)$', opt.strip())]
-                        
-                        # Placeholder for correct answer
-                        correct_answer = "Not Available"
-                        
-                        # Create the Question and Options in the database
-                        question = Questions.objects.create(test=selected_test, question_text=question_text, correct_answer=correct_answer)
-                        
-                        for option_text in options:
-                            Options.objects.create(question=question, option_text=option_text)
-                
-                return redirect(reverse_lazy('question_list'))
-            except requests.exceptions.RequestException as e:
-                form.add_error('google_form_link', f"Error fetching Google Form: {e}")
-            except Exception as e:
-                form.add_error(None, f"An unexpected error occurred: {e}")
-
+            for field in form_fields:
+                # Extract question text
+                question_title = field.find('div', {'role': 'heading'})
+                if question_title:
+                    question_text = question_title.text.strip()
+                    
+                    # Extract options
+                    options_text = field.get_text(separator="\n")
+                    options = re.split(r'(?:\d+\)|\d+\.\s*|[А-Яа-яA-Za-z]\))\s*', options_text)
+                    options = [opt.strip() for opt in options if opt.strip() and not re.match(r'^\d+\)|\d+\.\s*|[А-Яа-яA-Za-z]\)$', opt.strip())]
+                    
+                    # Assuming there is no direct way to find correct answers, set a placeholder
+                    correct_answer = "Not Available"
+                    
+                    # Create the Question and Options in the database
+                    question = Questions.objects.create(test=selected_test, question_text=question_text, correct_answer=correct_answer)
+                    
+                    for option_text in options:
+                        Options.objects.create(question=question, option_text=option_text)
+            
+            return redirect(reverse_lazy('question_list'))
     else:
         form = GoogleFormLinkForm()
 
