@@ -217,6 +217,14 @@ class UserPerformanceDeleteView(DeleteView):
     template_name = 'user_performance_confirm_delete.html'
     success_url = reverse_lazy('user_performance_list')
 
+import requests
+from bs4 import BeautifulSoup
+from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
+from .forms import GoogleFormLinkForm
+from .models import Questions, Options
+import re
+
 def import_google_form(request):
     if request.method == 'POST':
         form = GoogleFormLinkForm(request.POST)
@@ -237,21 +245,22 @@ def import_google_form(request):
                 question_title = field.find('div', {'role': 'heading'})
                 if question_title:
                     question_text = question_title.text.strip()
+
+                    # Extract the complete text including options
+                    complete_text = field.get_text(separator="\n").strip()
                     
-                    # Extract options
-                    options_text = field.get_text(separator="\n").strip()
+                    # Clean the complete text by removing question numbers and extra spaces
+                    cleaned_text = re.sub(r'^\d+\.\s*', '', complete_text).strip()
                     
-                    # Use regex to split based on option delimiters like А), В), С), Д)
-                    # This regex accounts for the format shown in your example.
-                    options = re.split(r'\s*[A-Я]\)\s*', options_text)
+                    # Split the cleaned text into question and options
+                    options = re.split(r'\s*[A-Я]\)\s*', cleaned_text)
                     options = [opt.strip() for opt in options if opt.strip()]
                     
-                    # Ensure question text is cleaned properly
-                    question_text = re.sub(r'^[0-9]+[).]\s*', '', question_text).strip()
+                    # Assume the first part is the question and the rest are options
+                    question_text = options.pop(0)
 
-                    # Remove the first element from options if it contains the question text
-                    if options and options[0].startswith(question_text[:10]):
-                        options.pop(0)
+                    # Ensure question text is cleaned properly
+                    question_text = re.sub(r'^\d+\.\s*', '', question_text).strip()
                     
                     # Assuming there is no direct way to find correct answers, set a placeholder
                     correct_answer = "Not Available"
