@@ -240,9 +240,15 @@ def import_google_form(request):
                     question_text = question_title.text.strip()
                     
                     # Extract options
-                    options_text = field.get_text(separator="\n")
-                    options = re.split(r'\s*[A-Za-zА-Яа-я0-9]\)\s*', options_text)
+                    options_text = field.get_text(separator="\n").strip()
+                    
+                    # Use regex to split based on option delimiters like А), В), С), Д)
+                    # This regex accounts for the format shown in your example.
+                    options = re.split(r'\s*[А-Я]\)\s*', options_text)
                     options = [opt.strip() for opt in options if opt.strip()]
+                    
+                    # The first element in options should be the question text, remove it
+                    question_text = options.pop(0)
                     
                     # Assuming there is no direct way to find correct answers, set a placeholder
                     correct_answer = "Not Available"
@@ -251,7 +257,9 @@ def import_google_form(request):
                     question = Questions.objects.create(test=selected_test, question_text=question_text, correct_answer=correct_answer)
                     
                     for option_text in options:
-                        Options.objects.create(question=question, option_text=option_text)
+                        # Clean options: remove any lingering prefixes like A), B), etc.
+                        cleaned_option = re.sub(r'^[А-Я]\)\s*', '', option_text).strip()
+                        Options.objects.create(question=question, option_text=cleaned_option)
             
             return redirect(reverse_lazy('question_list'))
     else:
