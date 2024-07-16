@@ -221,7 +221,7 @@ class UserPerformanceDeleteView(DeleteView):
 def import_google_form(request):
     if request.method == 'POST':
         form = GoogleFormLinkForm(request.POST)
-        if form is_valid():
+        if form.is_valid():
             google_form_link = form.cleaned_data['google_form_link']
             selected_test = form.cleaned_data['test']
             
