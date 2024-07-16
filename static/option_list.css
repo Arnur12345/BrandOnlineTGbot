@@ -207,12 +207,15 @@ body {
     background-color: #646994;
 }
 
-.btn-warning {
+.btn-edit {
     background-color: #2ecc71;
+    color: #fff;
+    margin-right: 10px;
 }
 
-.btn-danger {
+.btn-delete {
     background-color: #dc3545;
+    color: #fff;
 }
 
 .btn-secondary {
