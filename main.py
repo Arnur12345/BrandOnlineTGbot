@@ -69,14 +69,17 @@ def handle_test_selection(message):
 
 def ask_question(chat_id, context):
     question = context['questions'][context['current_question']]
-    markup = ReplyKeyboardMarkup(one_time_keyboard=True)
-    cursor.execute("SELECT id, option_text FROM options WHERE question_id = %s", (question[0],))
+    markup = ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True)
+    cursor.execute("SELECT option_text FROM options WHERE question_id = %s", (question[0],))
     options = cursor.fetchall()
+    
     for option in options:
-        markup.add(KeyboardButton(option[1]))
+        markup.add(KeyboardButton(option[0]))
+        
     bot.send_message(chat_id, question[1], reply_markup=markup)
     context['question_id'] = question[0]
     bot.register_next_step_handler_by_chat_id(chat_id, process_answer, context)
+
 
 
 def process_answer(message,context):
