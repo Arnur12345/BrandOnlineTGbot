@@ -253,7 +253,7 @@ def import_google_form(request):
                     cleaned_text = re.sub(r'^\d+\.\s*', '', complete_text).strip()
                     
                     # Split the cleaned text into question and options
-                    options = re.split(r'\s*[A-Я]\)\s*', cleaned_text)
+                    options = re.split(r'\s*[A-Я]\)\s*' or r'\s*[A-Я]\.\s*', cleaned_text)
                     options = [opt.strip() for opt in options if opt.strip()]
                     
                     # Assume the first part is the question and the rest are options
