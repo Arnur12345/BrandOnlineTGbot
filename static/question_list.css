@@ -181,6 +181,7 @@ body {
 
 
 .btn {
+    text-decoration: none;
     padding: 10px 20px;
     border: none;
     border-radius: 4px;
@@ -191,6 +192,7 @@ body {
 }
 
 .btn-primary {
+    text-decoration: none;
     display: inline-block;
     border-radius: 4px;
     background-color: #3d405b;
