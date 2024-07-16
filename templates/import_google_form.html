@@ -1,15 +1,59 @@
 <!DOCTYPE html>
-<html>
+{% load static %}
+<html lang="en">
 <head>
-    <title>Import Google Form</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Import Google Forms{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'google_forms.css' %}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
-    <h1>Import Google Form</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Import</button>
-    </form>
+    <div class="container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="profile">
+                    <div class="profile-info">
+                        <h4>Brand</h4>
+                        <span>Online</span>
+                    </div>
+                </div>
+            </div>
+            <ul class="nav-list">
+                <li><a href="{% url 'dashboard' %}"><i class="material-icons">dashboard</i> Dashboard</a></li>
+                <li><a href="{% url 'user_list' %}"><i class="material-icons">person</i> User List</a></li>
+                <li><a href="{% url 'subject_list' %}"><i class="material-icons">book</i> Subject List</a></li>
+                <li><a href="{% url 'test_list' %}"><i class="material-icons">assessment</i> Test List</a></li>
+                <li><a href="{% url 'question_list' %}"><i class="material-icons">question_answer</i> Question List</a></li>
+                <li><a href="{% url 'option_list' %}"><i class="material-icons">format_list_bulleted</i> Option List</a></li>
+                <li><a href="{% url 'import_google_form' %}"><i class="material-icons">import_contacts</i> Google Form</a></li>
+            </ul>
+        </div>
+        <div class="main-content">
+            <div class="topbar">
+                <div class="topbar-left">
+                    <h2>Import Google Forms</h2>
+                </div>                
+            </div>
+            <div class="content">
+                <div class="form-container">
+                    <h2>{% block form_title %}Import Google Forms{% endblock %}</h2>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="test">Select Test</label>
+                            {{ form.test }}
+                        </div>
+                        <div class="form-group">
+                            <label for="google_form_link">Input your link</label>
+                            {{ form.google_form_link }}
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                        <a href="{% url 'test_list' %}" class="btn btn-secondary">Cancel</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
-

@@ -36,11 +36,6 @@ class UserPerformanceForm(forms.ModelForm):
         model = UserPerformance
         fields = ['user', 'test', 'score', 'completed_at']
 
-# forms.py
-
-from django import forms
-from .models import Tests
-
 class GoogleFormLinkForm(forms.Form):
     google_form_link = forms.URLField(label='Google Form Link', required=True)
     test = forms.ModelChoiceField(queryset=Tests.objects.all(), label='Select Test', required=True)
