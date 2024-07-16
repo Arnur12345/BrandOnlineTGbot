@@ -221,7 +221,7 @@ class UserPerformanceDeleteView(DeleteView):
 def import_google_form(request):
     if request.method == 'POST':
         form = GoogleFormLinkForm(request.POST)
-        if form.is_valid():
+        if form is_valid():
             google_form_link = form.cleaned_data['google_form_link']
             selected_test = form.cleaned_data['test']
             
@@ -247,8 +247,14 @@ def import_google_form(request):
                     options = re.split(r'\s*(?<=\s[А-Я]\)\s)', options_text)
                     options = [opt.strip() for opt in options if opt.strip()]
 
-                    # Find the correct question text by removing the options part
+                    # The first element in options should be the question text, remove it
                     question_text = options.pop(0)
+                    
+                    # Clean options: remove numerical prefixes and brackets
+                    cleaned_options = []
+                    for option in options:
+                        cleaned_option = re.sub(r'^\d+\)\s*', '', option).strip()
+                        cleaned_options.append(cleaned_option)
                     
                     # Assuming there is no direct way to find correct answers, set a placeholder
                     correct_answer = "Not Available"
@@ -256,7 +262,7 @@ def import_google_form(request):
                     # Create the Question and Options in the database
                     question = Questions.objects.create(test=selected_test, question_text=question_text, correct_answer=correct_answer)
                     
-                    for option_text in options:
+                    for option_text in cleaned_options:
                         Options.objects.create(question=question, option_text=option_text)
             
             return redirect(reverse_lazy('question_list'))
